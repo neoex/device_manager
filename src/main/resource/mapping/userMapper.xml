@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev_manager.dao.UserMapper">
+    <!-- User的定义路径一致，下面是Java对象与数据库字段的映射关系。 -->
+    <resultMap id="BaseResultMap" type="com.dev_manager.entities.User">
+        <!-- id:User的唯一标识 -->
+        <!-- id属性来映射主键字段 -->
+        <!--property: 要将订单明细中的唯一标示映射到com.dev_manager.entities.User类的哪个属性 -->
+        <id column="id" property="userId" javaType="int"/>
+        <!-- result属性映射非主键字段 -->
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="password" property="password" javaType="String"/>
+        <result column="role" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_level" property="roleLevel" jdbcType="TINYINT"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">id,account,password,role,role_level</sql>
+    <!-- id必须与UserMapper中定义的方法名一致。  -->
+    <select id="check" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where account = #{username,jdbcType=VARCHAR}
+        and password = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <!--获取当前的用户名是否重复-->
+    <select id="checkAccountValid" parameterType="String" resultType="Integer">
+        select count(*) from user where account = #{account}
+    </select>
+    <!--插入一条数据-->
+    <insert id="addUser" parameterType="com.dev_manager.entities.User">
+        insert into user(account, password, role, role_level)
+        value (#{account},#{password},#{roleName},#{roleLevel})
+    </insert>
+
+</mapper>
